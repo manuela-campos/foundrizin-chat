@@ -1,582 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foundrizin — AI Foundry SENAI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg:        #0b0e14;
-      --surface:   #13171f;
-      --surface2:  #1c2230;
-      --border:    #252d3d;
-      --accent:    #00d4ff;
-      --accent2:   #7c6af7;
-      --user-bubble: #1a2540;
-      --bot-bubble:  #131a28;
-      --text:      #e8edf5;
-      --text-muted:#6b7a99;
-      --danger:    #ff4d6d;
-      --radius:    14px;
-      --font-head: 'Syne', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foundrizin — AI Foundry SENAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <div id="app">
+      <header>
+        <div class="header-left">
+          <div class="logo-ring">F</div>
+          <div>
+            <div class="header-title">
+              Foundrizin <span class="status-dot"></span>
+            </div>
+            <div class="header-sub">AI Foundry SENAI — Agent System</div>
+          </div>
+        </div>
+        <button id="btn-config">⚙ Config</button>
+      </header>
 
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 15px;
-      overflow: hidden;
-    }
-
-    /* ── NOISE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 200px;
-      pointer-events: none;
-      opacity: .5;
-    }
-
-    /* ── GLOW BLOBS ── */
-    .blob {
-      position: fixed; border-radius: 50%;
-      filter: blur(90px); pointer-events: none; z-index: 0;
-      animation: drift 12s ease-in-out infinite alternate;
-    }
-    .blob-1 { width: 380px; height: 380px; background: rgba(0,212,255,.07); top: -80px; left: -60px; }
-    .blob-2 { width: 300px; height: 300px; background: rgba(124,106,247,.08); bottom: -60px; right: -40px; animation-delay: -5s; }
-    @keyframes drift { to { transform: translate(30px, 20px) scale(1.05); } }
-
-    /* ── LAYOUT ── */
-    #app {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column;
-      height: 100vh; max-width: 860px;
-      margin: 0 auto;
-    }
-
-    /* ── HEADER ── */
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 24px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(11,14,20,.85);
-      backdrop-filter: blur(16px);
-      flex-shrink: 0;
-    }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .logo-ring {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-head); font-weight: 800; font-size: 18px;
-      color: #fff; flex-shrink: 0;
-      box-shadow: 0 0 18px rgba(0,212,255,.3);
-      animation: pulse-ring 3s ease-in-out infinite;
-    }
-    @keyframes pulse-ring {
-      0%,100% { box-shadow: 0 0 18px rgba(0,212,255,.3); }
-      50%      { box-shadow: 0 0 30px rgba(0,212,255,.55); }
-    }
-    .header-title { font-family: var(--font-head); font-weight: 700; font-size: 18px; letter-spacing: -.3px; }
-    .header-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-    .status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #2dd47e; margin-left: 6px; display: inline-block;
-      box-shadow: 0 0 8px #2dd47e;
-      animation: blink 2.5s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-    #btn-config {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text-muted); border-radius: 8px;
-      padding: 7px 14px; font-size: 13px; font-family: var(--font-body);
-      cursor: pointer; display: flex; align-items: center; gap: 6px;
-      transition: all .2s;
-    }
-    #btn-config:hover { background: var(--border); color: var(--text); }
-
-    /* ── MESSAGES ── */
-    #messages {
-      flex: 1; overflow-y: auto; padding: 24px 20px;
-      display: flex; flex-direction: column; gap: 6px;
-      scroll-behavior: smooth;
-    }
-    #messages::-webkit-scrollbar { width: 4px; }
-    #messages::-webkit-scrollbar-track { background: transparent; }
-    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-    /* ── WELCOME ── */
-    #welcome {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; flex: 1; text-align: center;
-      gap: 16px; padding: 40px 20px; animation: fadeUp .5s ease both;
-    }
-    .welcome-icon {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-head); font-weight: 800; font-size: 32px;
-      color: #fff; box-shadow: 0 0 36px rgba(0,212,255,.25);
-    }
-    .welcome-title { font-family: var(--font-head); font-size: 26px; font-weight: 800; }
-    .welcome-sub   { color: var(--text-muted); font-size: 14px; line-height: 1.6; max-width: 380px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
-    .chip {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 8px 16px; font-size: 13px;
-      cursor: pointer; transition: all .2s; color: var(--text);
-    }
-    .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.06); }
-
-    /* ── MESSAGE BUBBLES ── */
-    .msg-row {
-      display: flex; gap: 10px;
-      animation: fadeUp .3s ease both;
-    }
-    .msg-row.user  { flex-direction: row-reverse; }
-    .msg-row.bot   { flex-direction: row; }
-
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700; font-family: var(--font-head);
-      margin-top: 4px;
-    }
-    .avatar.bot  { background: linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-size:13px; }
-    .avatar.user { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size:12px; }
-
-    .bubble {
-      max-width: 72%; padding: 12px 16px; border-radius: var(--radius);
-      line-height: 1.65; font-size: 14.5px;
-    }
-    .msg-row.user .bubble {
-      background: var(--user-bubble);
-      border: 1px solid rgba(0,212,255,.15);
-      border-bottom-right-radius: 4px;
-    }
-    .msg-row.bot .bubble {
-      background: var(--bot-bubble);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-    }
-
-    /* ── TYPING INDICATOR ── */
-    .typing-dots { display: flex; gap: 5px; align-items: center; padding: 4px 2px; }
-    .typing-dots span {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent); opacity: .6;
-      animation: bounce 1.2s ease-in-out infinite;
-    }
-    .typing-dots span:nth-child(2) { animation-delay: .2s; }
-    .typing-dots span:nth-child(3) { animation-delay: .4s; }
-    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-7px)} }
-
-    /* ── INPUT AREA ── */
-    #input-area {
-      padding: 16px 20px 20px;
-      border-top: 1px solid var(--border);
-      background: rgba(11,14,20,.9);
-      backdrop-filter: blur(16px);
-      flex-shrink: 0;
-    }
-    #input-wrap {
-      display: flex; gap: 10px; align-items: flex-end;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 10px 12px;
-      transition: border-color .2s;
-    }
-    #input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,255,.08); }
-    #input {
-      flex: 1; background: none; border: none; outline: none;
-      color: var(--text); font-family: var(--font-body); font-size: 14.5px;
-      resize: none; max-height: 140px; min-height: 24px;
-      line-height: 1.5;
-    }
-    #input::placeholder { color: var(--text-muted); }
-    #send-btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none; border-radius: 9px; width: 36px; height: 36px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: opacity .2s, transform .15s;
-    }
-    #send-btn:hover  { opacity: .88; transform: scale(1.06); }
-    #send-btn:active { transform: scale(.96); }
-    #send-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-    #send-btn svg { width: 16px; height: 16px; fill: #fff; }
-    .hint { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
-
-    /* ── CONFIG MODAL ── */
-    #modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
-      align-items: center; justify-content: center;
-    }
-    #modal-overlay.open { display: flex; }
-    #modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; padding: 28px; width: 90%; max-width: 460px;
-      animation: scaleIn .25s ease both;
-    }
-    @keyframes scaleIn { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
-    .modal-title { font-family: var(--font-head); font-size: 18px; font-weight: 700; }
-    #modal-close {
-      background: none; border: none; color: var(--text-muted);
-      font-size: 22px; cursor: pointer; line-height: 1; padding: 2px 6px;
-      border-radius: 6px; transition: color .15s, background .15s;
-    }
-    #modal-close:hover { color: var(--text); background: var(--surface2); }
-
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; letter-spacing: .5px; text-transform: uppercase; }
-    .field input {
-      width: 100%; background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 9px; padding: 10px 14px; color: var(--text);
-      font-family: var(--font-body); font-size: 14px; outline: none;
-      transition: border-color .2s;
-    }
-    .field input:focus { border-color: var(--accent); }
-    .field input::placeholder { color: var(--text-muted); }
-
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-    #btn-save {
-      width: 100%; margin-top: 6px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none; border-radius: 10px; padding: 12px;
-      color: #fff; font-family: var(--font-head); font-weight: 700;
-      font-size: 15px; cursor: pointer; transition: opacity .2s;
-    }
-    #btn-save:hover { opacity: .88; }
-
-    .warn-box {
-      background: rgba(255,77,109,.08); border: 1px solid rgba(255,77,109,.25);
-      border-radius: 9px; padding: 10px 14px; font-size: 12.5px;
-      color: #ff8fa3; line-height: 1.5; margin-top: 14px;
-    }
-
-    /* ── UTIL ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .error-msg { color: var(--danger); font-size: 13px; padding: 4px 0; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      header { padding: 14px 16px; }
-      #messages { padding: 16px 12px; }
-      #input-area { padding: 12px 12px 16px; }
-      .bubble { max-width: 85%; font-size: 14px; }
-      #modal { padding: 22px 18px; }
-      .field-row { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
-  <div id="app">
-    <!-- HEADER -->
-    <header>
-      <div class="header-left">
-        <div class="logo-ring">F</div>
-        <div>
-          <div class="header-title">Foundrizin <span class="status-dot"></span></div>
-          <div class="header-sub">AI Foundry SENAI — GPT-4.1-mini</div>
+      <div id="messages">
+        <div id="welcome">
+          <div class="welcome-icon">F</div>
+          <div class="welcome-title">Olá! Sou o Foundrizin, uai!</div>
+          <div class="welcome-sub">
+            Seu assistente de IA do SENAI. Configure suas credenciais e pode
+            perguntar o que quiser, aaa.
+          </div>
+          <div class="chips">
+            <div class="chip" onclick="sendChip(this)">
+              O que você pode fazer?
+            </div>
+            <div class="chip" onclick="sendChip(this)">
+              Como funciona o Azure AI?
+            </div>
+            <div class="chip" onclick="sendChip(this)">
+              Me conta uma curiosidade!
+            </div>
+            <div class="chip" onclick="sendChip(this)">Ajuda com código</div>
+          </div>
         </div>
       </div>
-      <button id="btn-config">⚙ Config</button>
-    </header>
 
-    <!-- MESSAGES -->
-    <div id="messages">
-      <div id="welcome">
-        <div class="welcome-icon">F</div>
-        <div class="welcome-title">Olá! Sou o Foundrizin, uai!</div>
-        <div class="welcome-sub">Seu assistente de IA do SENAI. Configure suas credenciais e pode perguntar o que quiser, aaa.</div>
-        <div class="chips">
-          <div class="chip" onclick="sendChip(this)">O que você pode fazer?</div>
-          <div class="chip" onclick="sendChip(this)">Como funciona o Azure AI?</div>
-          <div class="chip" onclick="sendChip(this)">Me conta uma curiosidade!</div>
-          <div class="chip" onclick="sendChip(this)">Ajuda com código</div>
+      <div id="input-area">
+        <div id="input-wrap">
+          <textarea
+            id="input"
+            rows="1"
+            placeholder="Escreva sua mensagem..."
+            autocomplete="off"
+          ></textarea>
+          <button id="send-btn" title="Enviar">
+            <svg viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </div>
+        <div class="hint">
+          Enter para enviar · Shift+Enter para quebrar linha
         </div>
       </div>
     </div>
 
-    <!-- INPUT -->
-    <div id="input-area">
-      <div id="input-wrap">
-        <textarea id="input" rows="1" placeholder="Escreva sua mensagem..." autocomplete="off"></textarea>
-        <button id="send-btn" title="Enviar">
-          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
-      </div>
-      <div class="hint">Enter para enviar · Shift+Enter para quebrar linha</div>
-    </div>
-  </div>
+    <div id="modal-overlay">
+      <div id="modal">
+        <div class="modal-header">
+          <span class="modal-title">⚙ Configuração</span>
+          <button id="modal-close">×</button>
+        </div>
 
-  <!-- CONFIG MODAL -->
-  <div id="modal-overlay">
-    <div id="modal">
-      <div class="modal-header">
-        <span class="modal-title">⚙ Configuração</span>
-        <button id="modal-close">×</button>
-      </div>
-
-      <div class="field">
-        <label>Endpoint do Azure AI Foundry</label>
-        <input id="cfg-endpoint" type="text"
-          placeholder="https://SEU-RECURSO.services.ai.azure.com/api/projects/SEU-PROJETO" />
-      </div>
-
-      <div class="field-row">
         <div class="field">
-          <label>Nome do Agente</label>
-          <input id="cfg-agent" type="text" value="ai-foundry-senai" />
+          <label>Endpoint do Azure AI Foundry Project</label>
+          <input
+            id="cfg-endpoint"
+            type="text"
+            placeholder="https://si-chatbot-foundry.services.ai.azure.com/api/projects/proj-default"
+          />
         </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Nome do Agente</label>
+            <input id="cfg-agent-name" type="text" value="foundrizin" />
+          </div>
+          <div class="field">
+            <label>Versão</label>
+            <input id="cfg-agent-version" type="text" value="1" />
+          </div>
+        </div>
+
         <div class="field">
-          <label>Versão</label>
-          <input id="cfg-version" type="text" value="3" />
+          <label>API Key</label>
+          <input
+            id="cfg-key"
+            type="password"
+            placeholder="Sua API Key do Azure"
+          />
         </div>
-      </div>
 
-      <div class="field">
-        <label>API Key</label>
-        <input id="cfg-key" type="password" placeholder="Cole sua chave aqui" />
-      </div>
+        <button id="btn-save">Salvar e fechar</button>
 
-      <button id="btn-save">Salvar e fechar</button>
-
-      <div class="warn-box">
-        ⚠️ A API Key fica exposta no navegador. Para uso em produção, utilize uma Azure Function como proxy.
+        <div class="warn-box">
+          ⚠️ A API Key fica exposta no navegador. Para uso em produção, utilize
+          uma Azure Function como proxy.
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // ── CONFIG ──────────────────────────────────────────────
-    const LS_KEY = 'foundrizin_cfg';
-    // Credenciais injetadas pelo GitHub Actions (não edite manualmente)
-    const ENV_ENDPOINT = '';
-    const ENV_KEY      = '';
-
-    const savedCfg = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-
-    // Se o GitHub Actions injetou as credenciais, usa elas como padrão
-    let cfg = {
-      endpoint: savedCfg.endpoint || (ENV_ENDPOINT.startsWith('__') ? '' : ENV_ENDPOINT),
-      agent:    savedCfg.agent    || 'ai-foundry-senai',
-      version:  savedCfg.version  || '3',
-      key:      savedCfg.key      || (ENV_KEY.startsWith('__') ? '' : ENV_KEY),
-    };
-
-    const $  = id => document.getElementById(id);
-    const messages  = $('messages');
-    const input     = $('input');
-    const sendBtn   = $('send-btn');
-    const overlay   = $('modal-overlay');
-
-    // ── MODAL ────────────────────────────────────────────────
-    function openModal() {
-      $('cfg-endpoint').value = cfg.endpoint || '';
-      $('cfg-agent').value    = cfg.agent    || 'ai-foundry-senai';
-      $('cfg-version').value  = cfg.version  || '3';
-      $('cfg-key').value      = cfg.key      || '';
-      overlay.classList.add('open');
-    }
-    function closeModal() { overlay.classList.remove('open'); }
-
-    $('btn-config').onclick  = openModal;
-    $('modal-close').onclick = closeModal;
-    overlay.onclick = e => { if (e.target === overlay) closeModal(); };
-
-    $('btn-save').onclick = () => {
-      cfg = {
-        endpoint: $('cfg-endpoint').value.trim().replace(/\/$/, ''),
-        agent:    $('cfg-agent').value.trim(),
-        version:  $('cfg-version').value.trim(),
-        key:      $('cfg-key').value.trim(),
-      };
-      localStorage.setItem(LS_KEY, JSON.stringify(cfg));
-      closeModal();
-    };
-
-    // ── RENDER ───────────────────────────────────────────────
-    let history = [];
-
-    function hideWelcome() {
-      const w = $('welcome');
-      if (w) w.remove();
-    }
-
-    function addMessage(role, text) {
-      hideWelcome();
-      const row = document.createElement('div');
-      row.className = `msg-row ${role}`;
-
-      const avatar = document.createElement('div');
-      avatar.className = `avatar ${role}`;
-      avatar.textContent = role === 'bot' ? 'F' : 'Eu';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.innerHTML = formatText(text);
-
-      row.appendChild(avatar);
-      row.appendChild(bubble);
-      messages.appendChild(row);
-      messages.scrollTop = messages.scrollHeight;
-      return bubble;
-    }
-
-    function addTyping() {
-      hideWelcome();
-      const row = document.createElement('div');
-      row.className = 'msg-row bot';
-      row.id = 'typing-row';
-
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar bot';
-      avatar.textContent = 'F';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-
-      row.appendChild(avatar);
-      row.appendChild(bubble);
-      messages.appendChild(row);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function removeTyping() {
-      const t = $('typing-row');
-      if (t) t.remove();
-    }
-
-    function formatText(text) {
-      // Markdown básico: bold, italic, code, links
-      return text
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        .replace(/`([^`]+)`/g, '<code style="background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:13px">$1</code>')
-        .replace(/\n/g, '<br>');
-    }
-
-    // ── API CALL ─────────────────────────────────────────────
-    async function callFoundry(userText) {
-      if (!cfg.endpoint || !cfg.key) {
-        addMessage('bot', '⚠️ Configure o **Endpoint** e a **API Key** clicando em ⚙ Config, uai, aaa.');
-        return;
-      }
-
-      history.push({ role: 'user', content: userText });
-
-      addTyping();
-      sendBtn.disabled = true;
-
-      try {
-        const url = `${cfg.endpoint}/openai/responses?api-version=2025-05-15-preview`;
-
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'api-key': cfg.key,
-          },
-          body: JSON.stringify({
-            model: 'gpt-4.1-mini',
-            input: history,
-            extra_body: {
-              agent_reference: {
-                name:    cfg.agent   || 'ai-foundry-senai',
-                version: cfg.version || '3',
-                type:    'agent_reference',
-              },
-            },
-          }),
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err?.error?.message || `HTTP ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        // Extrai o texto da resposta (Responses API)
-        let reply = '';
-        if (data.output) {
-          for (const item of data.output) {
-            if (item.type === 'message' && item.role === 'assistant') {
-              for (const c of item.content) {
-                if (c.type === 'output_text') reply += c.text;
-              }
-            }
-          }
-        }
-        if (!reply) reply = 'Não consegui obter uma resposta, aaa.';
-
-        history.push({ role: 'assistant', content: reply });
-        removeTyping();
-        addMessage('bot', reply);
-
-      } catch (err) {
-        removeTyping();
-        addMessage('bot', `❌ Erro: **${err.message}**, aaa. Verifique o endpoint e a API Key em ⚙ Config.`);
-        // Remove a msg do usuário do histórico se deu erro
-        history.pop();
-      } finally {
-        sendBtn.disabled = false;
-        input.focus();
-      }
-    }
-
-    // ── SEND ─────────────────────────────────────────────────
-    function send() {
-      const text = input.value.trim();
-      if (!text) return;
-      addMessage('user', text);
-      input.value = '';
-      input.style.height = 'auto';
-      callFoundry(text);
-    }
-
-    sendBtn.onclick = send;
-
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
-    });
-
-    // Auto-resize textarea
-    input.addEventListener('input', () => {
-      input.style.height = 'auto';
-      input.style.height = Math.min(input.scrollHeight, 140) + 'px';
-    });
-
-    function sendChip(el) {
-      input.value = el.textContent;
-      send();
-    }
-
-    // Abre config automaticamente se não configurado
-    if (!cfg.endpoint || !cfg.key) {
-      setTimeout(openModal, 800);
-    }
-  </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
