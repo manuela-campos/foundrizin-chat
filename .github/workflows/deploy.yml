@@ -1,0 +1,28 @@
+name: Deploy Foundrizin para GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Injetar credenciais no index.html
+        run: |
+          sed -i "s|__AZURE_ENDPOINT__|${{ secrets.AZURE_ENDPOINT }}|g" index.html
+          sed -i "s|__AZURE_API_KEY__|${{ secrets.API_KEY }}|g" index.html
+
+      - name: Deploy para GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
