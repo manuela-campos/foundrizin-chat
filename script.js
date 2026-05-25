@@ -8,8 +8,7 @@ const ENV_KEY = "__AZURE_API_KEY__";
 const savedCfg = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
 
 let cfg = {
-  endpoint:
-    savedCfg.endpoint || (ENV_ENDPOINT.startsWith("__") ? "" : ENV_ENDPOINT),
+  endpoint: savedCfg.endpoint || (ENV_ENDPOINT.startsWith("__") ? "" : ENV_ENDPOINT),
   model: savedCfg.model || "gpt-oss-120b",
   agentName: savedCfg.agentName || "foundrizin",
   agentVersion: savedCfg.agentVersion || "1",
@@ -47,13 +46,14 @@ overlay.onclick = (e) => {
 
 $("btn-save").onclick = () => {
   cfg = {
-    endpoint: $("cfg-endpoint").value.trim().replace(/\/$/, ""),
+    // Remove barras invertidas no final para não duplicar na concatenação das rotas
+    endpoint: $("cfg-endpoint").value.trim().replace(/\/+$/, ""),
     agentName: $("cfg-agent-name").value.trim(),
     agentVersion: $("cfg-agent-version").value.trim(),
     key: $("cfg-key").value.trim(),
   };
   localStorage.setItem(LS_KEY, JSON.stringify(cfg));
-  currentConversationId = null; // Limpa a conversa antiga se mudar de configuração
+  currentConversationId = null; // Limpa a conversa antiga se mudar de configuração para gerar uma nova
   closeModal();
 };
 
@@ -90,7 +90,7 @@ function addTyping() {
   row.id = "typing-row";
 
   const avatar = document.createElement("div");
-  avatar.className = "avatar bot";
+  avatar.className = `avatar bot`;
   avatar.textContent = "F";
 
   const bubble = document.createElement("div");
@@ -123,7 +123,7 @@ function formatText(text) {
     .replace(/\n/g, "<br>");
 }
 
-// ── REQUISIÇÃO (INTEGRAÇÃO COM AZURE AGENT BASEADO NO SDK) ──
+// ── REQUISIÇÃO (INTEGRAÇÃO COM AZURE AGENT BASEADO NO SDK VIA HTTP REST) ──
 async function callFoundry(userText) {
   if (!cfg.endpoint || !cfg.key) {
     addMessage(
@@ -143,7 +143,7 @@ async function callFoundry(userText) {
       "api-key": cfg.key,
     };
 
-    // PASSO 1: Garantir que temos uma conversa ativa (openAIClient.conversations.create)
+    // PASSO 1: Garantir que temos uma conversa ativa (Simula: openAIClient.conversations.create)
     if (!currentConversationId) {
       const convUrl = `${cfg.endpoint}/conversations?api-version=${apiVersion}`;
       const convRes = await fetch(convUrl, {
@@ -162,7 +162,7 @@ async function callFoundry(userText) {
       }
 
       const convData = await convRes.json();
-      currentConversationId = convData.id; // Salvamos o ID retornado pela Azure
+      currentConversationId = convData.id; // Salvamos o ID retornado pela Azure para as próximas mensagens
     } else {
       // Se a conversa já existe, adicionamos a nova mensagem à rota de mensagens dela
       const msgUrl = `${cfg.endpoint}/conversations/${currentConversationId}/messages?api-version=${apiVersion}`;
@@ -183,7 +183,7 @@ async function callFoundry(userText) {
       }
     }
 
-    // PASSO 2: Solicitar a resposta do Agente (openAIClient.responses.create)
+    // PASSO 2: Solicitar a resposta do Agente (Simula: openAIClient.responses.create)
     const responseUrl = `${cfg.endpoint}/conversations/${currentConversationId}/responses?api-version=${apiVersion}`;
     const res = await fetch(responseUrl, {
       method: "POST",
